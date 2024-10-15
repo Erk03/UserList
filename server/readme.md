@@ -1,5 +1,3 @@
-# SoftUni Practice Server
-
 ## Usage
 
 This is **REST service**, created for educational purposes. To execute it, open a command prompt and run `node server.js`.
@@ -94,4 +92,3 @@ Content:
   "isCompleted": boolean,
 }
 ```
-
