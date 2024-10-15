@@ -1,6 +1,16 @@
 import UserlistItem from "./UserlistItem";
+import * as userService from "../services/userService";
+import { useEffect, useState } from "react";
 
 export default function UserlistTable() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    userService.getAll().then((result) => setUsers(result));
+  }, []);
+
+  console.log(users);
+
   return (
     <div className="table-wrapper">
       <table className="table">
@@ -102,7 +112,17 @@ export default function UserlistTable() {
           </tr>
         </thead>
         <tbody>
-          <UserlistItem />
+          {users.map((user) => (
+            <UserlistItem
+              key={user._id}
+              createdAt={user.createdAt}
+              email={user.email}
+              firstName={user.firstName}
+              imageUrl={user.imageUrl}
+              lastName={user.lastName}
+              phoneNumber={user.phoneNumber}
+            />
+          ))}
         </tbody>
       </table>
     </div>
