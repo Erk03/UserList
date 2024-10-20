@@ -1,13 +1,25 @@
 import { formatDate } from "../utils/dateUtils";
+import * as userService from "../services/userService";
 
 export default function UserlistItem({
+  userId,
   firstName,
   lastName,
   email,
   phoneNumber,
   createdAt,
   imageUrl,
+  onInfoClick,
+  onDeleteClick,
 }) {
+  const infoClickHandler = () => {
+    onInfoClick(userId);
+  };
+
+  const deleteClickHandler = () => {
+    onDeleteClick(userId);
+  };
+
   return (
     <tr>
       <td>
@@ -37,7 +49,11 @@ export default function UserlistItem({
             ></path>
           </svg>
         </button>
-        <button className="btn delete-btn" title="Delete">
+        <button
+          className="btn delete-btn"
+          title="Delete"
+          onClick={deleteClickHandler}
+        >
           <svg
             aria-hidden="true"
             focusable="false"
@@ -54,7 +70,12 @@ export default function UserlistItem({
             ></path>
           </svg>
         </button>
-        <button className="btn info-btn" title="Info">
+
+        <button
+          className="btn info-btn"
+          title="Info"
+          onClick={() => infoClickHandler}
+        >
           <svg
             aria-hidden="true"
             focusable="false"

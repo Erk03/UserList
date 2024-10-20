@@ -1,11 +1,16 @@
 import UserlistItem from "./UserlistItem";
 import CreateUserModal from "./CreateUserModal";
+import UserInfoModal from "./UserInfoModal";
 import * as userService from "../services/userService";
 import { useEffect, useState } from "react";
+import UserDeleteModal from "./UserDeleteModal";
 
 export default function UserlistTable() {
   const [users, setUsers] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showDelete, setShowDelete] = useState(false);
 
   useEffect(() => {
     userService
@@ -30,12 +35,44 @@ export default function UserlistTable() {
     setShowCreate(false);
   };
 
+  const userInfoClickHandler = async (userId) => {
+    setSelectedUser(userId);
+    setShowInfo(true);
+  };
+
+  const deleteUserClickHandler = (userId) => {
+    setSelectedUser(userId);
+    setShowDelete(true);
+  };
+
+  const deleteUserHandler = async () => {
+    const result = await userService.remove(selectedUser);
+
+    setUsers((state) => state.filter((user) => user._id !== selectedUser));
+
+    setShowDelete(false);
+  };
+
   return (
     <div className="table-wrapper">
       {showCreate && (
         <CreateUserModal
           hideCreateUserModal={hideCreateUserModal}
-          onUserCreate={userCreateHandler}
+          onCreate={userCreateHandler}
+        />
+      )}
+
+      {showInfo && (
+        <UserInfoModal
+          userId={selectedUser}
+          onClose={() => setShowInfo(false)}
+        />
+      )}
+
+      {showDelete && (
+        <UserDeleteModal
+          onClose={() => setShowDelete(false)}
+          OnDelete={deleteUserHandler}
         />
       )}
 
@@ -141,12 +178,15 @@ export default function UserlistTable() {
           {users.map((user) => (
             <UserlistItem
               key={user._id}
+              userId={user._id}
               createdAt={user.createdAt}
               email={user.email}
               firstName={user.firstName}
               imageUrl={user.imageUrl}
               lastName={user.lastName}
               phoneNumber={user.phoneNumber}
+              onInfoClick={userInfoClickHandler}
+              onDeleteClick={deleteUserClickHandler}
             />
           ))}
         </tbody>
