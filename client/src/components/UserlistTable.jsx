@@ -4,19 +4,24 @@ import UserInfoModal from "./UserInfoModal";
 import * as userService from "../services/userService";
 import { useEffect, useState } from "react";
 import UserDeleteModal from "./UserDeleteModal";
+import Spinner from "./Spinner";
 
 export default function UserlistTable() {
   const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
+
     userService
       .getAll()
       .then((result) => setUsers(result))
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => setIsLoading(false));
   }, []);
 
   const createUserClickHandler = () => {
@@ -46,7 +51,7 @@ export default function UserlistTable() {
   };
 
   const deleteUserHandler = async () => {
-    const result = await userService.remove(selectedUser);
+    await userService.remove(selectedUser);
 
     setUsers((state) => state.filter((user) => user._id !== selectedUser));
 
@@ -76,6 +81,7 @@ export default function UserlistTable() {
         />
       )}
 
+      {isLoading && <Spinner />}
       <table className="table">
         <thead>
           <tr>
